@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Welcome Safsofy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --dark-red-bg: #000000;
+            --mid-red-bg: #4a0000;
+            --top-bg: #1a0000;
+            --card-red: rgba(255, 0, 0, 0.15);
+            --neon-red: #ff0000;
+        }
+
+        body {
+            background: linear-gradient(180deg, var(--dark-red-bg) 0%, var(--mid-red-bg) 50%, var(--dark-red-bg) 100%);
+            margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center;
+            font-family: 'Cairo', sans-serif; overflow: hidden; perspective: 2000px;
+            touch-action: manipulation;
+        }
+
+        .aurora {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 0, 0, 0.3) 0%, transparent 70%);
+            z-index: 0; filter: blur(30px);
+        }
+
+        #heart-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 2; }
+
+        .lights { 
+            position: absolute; top: 0; width: 100%; display: flex; 
+            justify-content: space-around; z-index: 10; padding: 10px 0;
+        }
+        .light { 
+            width: 12px; height: 12px; border-radius: 50%; 
+            animation: blink 0.8s infinite alternate ease-in-out;
+        }
+        @keyframes blink { 
+            0% { opacity: 0.3; transform: scale(0.8); box-shadow: 0 0 10px currentColor; } 
+            100% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 20px currentColor; } 
+        }
+
+        .container { 
+            position: relative; width: 92%; max-width: 420px; height: 650px;
+            z-index: 5; transform-style: preserve-3d; transition: transform 0.5s ease-out;
+        }
+
+        .card {
+            position: absolute; width: 100%; height: 100%; 
+            background: var(--card-red);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 50px; padding: 30px 20px; text-align: center;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.8);
+            display: flex; flex-direction: column; align-items: center;
+            opacity: 0; pointer-events: none;
+            transform: translateZ(-800px) rotateX(10deg);
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            visibility: hidden;
+            color: white;
+        }
+
+        .card::after {
+            content: ''; position: absolute; inset: -2px; border-radius: 50px;
+            padding: 2px; background: linear-gradient(45deg, #ff0000, transparent, #ff0000);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            pointer-events: none; animation: rotateGlow 4s linear infinite;
+        }
+
+        @keyframes rotateGlow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+
+        .active-card { opacity: 1 !important; pointer-events: auto !important; transform: translateZ(0) rotateX(0deg) !important; visibility: visible;}
+        .exit-card { opacity: 0 !important; transform: translateZ(500px) translateY(-50px) !important; }
+
+        #myVideo {
+            width: 100%; 
+            height: 180px; 
+            border-radius: 15px; 
+            background: #000; 
+            object-fit: cover; 
+            margin-bottom: 10px; 
+            border: 2px solid #ff0000;
+            box-shadow: 0 0 15px #ff0000;
+        }
+
+        .main-brand { font-family: 'Amiri', serif; font-size: 2.5rem; background: linear-gradient(to right, #fff, #ff0000); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0; }
+        
+        .heart-to-heart {
+            color: #ffffff; font-size: 1.4rem; margin: 5px 0;
+            text-shadow: 0 0 10px #ff0000;
+            font-weight: bold;
+        }
+
+        input { width: 100%; height: 55px; border-radius: 25px; border: none; margin: 15px 0; text-align: center; font-size: 1.1rem; background: rgba(255,255,255,0.1); color: #fff; font-family: 'Cairo'; transition: 0.3s; }
+        input:focus { background: rgba(255,255,255,0.2); outline: none; box-shadow: 0 0 20px var(--neon-red); }
+
+        .unlock-btn { width: 100%; min-height: 60px; border-radius: 25px; border: none; background: linear-gradient(45deg, #8b0000, #ff0000); color: white; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.4s; box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4); }
+
+        .message-box {
+            font-size: 0.95rem; line-height: 1.8; color: #eee; 
+            overflow-y: auto; max-height: 250px; padding: 15px; 
+            background: rgba(0,0,0,0.4); border-radius: 25px; 
+            text-align: right; border: 1px solid rgba(255,0,0,0.2);
+        }
+
+        /* تعديل الصور لتظهر كاملة */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .photo-frame {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid #ff0000;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* تظهر الصورة كاملة هنا */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="aurora"></div>
+    <audio id="xmasSound" src="https://www.soundjay.com/holiday/sleigh-bells-7.mp3" preload="auto"></audio>
+    <canvas id="heart-canvas"></canvas>
+    <div class="lights" id="top-lights"></div>
+
+    <div class="container" id="mainContainer">
+        <div id="step1" class="card active-card">
+            <div style="background:#b30000; padding: 5px 25px; border-radius:20px; font-weight:bold; margin-bottom:10px;">2026</div>
+            <h1 class="main-brand">Welcome Safsofy</h1>
+            <p style="color: rgba(255,255,255,0.9); font-size: 1.1rem;">To enter, type our special date ❤</p>
+            <input type="text" id="passCode" placeholder="أدخل التاريخ الخاص بنا ✨" onkeypress="handleEnter(event)">
+            <button class="unlock-btn" id="loginBtn" onclick="checkPassword()">فتح العالم الخاص 🌹</button>
+        </div>
+
+        <div id="step2" class="card">
+            <video id="myVideo" loop playsinline>
+                <source src="https://files.catbox.moe/20lohi.mp4" type="video/mp4">
+            </video>
+            <h3 class="heart-to-heart">From my heart to yours ♥</h3>
+            <div class="message-box">
+                <p>كل سنة وإنت أحلى حاجة حصلتلي. أول سنة جديدة تدخل علينا وإحنا مع بعض، وأنا بجد مش مصدقة قد إيه ربنا كريم إنه جمعني بيك. السنة اللي فاتت عدّت بكل اللي فيها، بفرحها بزعلها، بس اللي مخلّيها مختلفة ومميزة إنك كنت جزء منها، وكنت دايمًا موجود حتى في أصعب اللحظات.</p>
+                <p>وجودك في حياتي فرّق معايا في حاجات كتير اوي، طمّنتني في أوقات كنت محتاجة فيها كلمة، وضحكتني وأنا متضايقة، وحسستني إن في حد شايفني ومهتم بيا بجد. معاك اتعلمت يعني إيه حب فيه أمان، يعني إيه حد تختار تحكيله عن يومك بكل تفاصيله من غير ما تحس بثقل أو خوف.</p>
+                <p>السنة الجديدة دي داخلة وأنا قلبي مليان أمل، نفسي تكون سنة راحة لينا سنة نحقق فيها اللي نفسنا فيه، ونفضل دايمًا سند لبعض مهما الدنيا ضغطت علينا. نفسي نعدّي أي حاجة سوا ، ونفهم بعض أكتر، وما نسيبش الزعل يبعدنا ولا سوء الفهم يكبر بينا إنت نعمة كبيرة في حياتي، وأنا بجد ممتنة لربنا عليك كل يوم. بحبك حب ميتوصفش بجد، حب بيكبر مع الوقت ومش بيقل. بتمنى من السنة الجديدة إنها تشيل لينا أيام حلوه نعوض فيها كل الوحش اللي فات، وذكريات حلوة نفضل نفتكرها،</p>
+                <p>كل سنة وإنت في حياتي، وكل سنة وإحنا اختيار بعض من غير تردد، ويا رب تكون السنة دي مجرد بداية لسنين طويلة جاية وإحنا جنب بعض، ماسكين في بعض، وبنحب بعض أكتر ربنا يديمك ليا دايما اخويا وصحبي وحبيبي وكل حاجه ليا بجد ومتحرمش من وجودك فحياتي العمر كله ومنور حياتي بكل تفاصيلك بحبكك اوي ❤❤❤❤🫂🌍</p>
+            </div>
+            <button class="unlock-btn" onclick="nextPage()" style="margin-top: 15px; min-height: 50px; font-size: 1rem;">ذكرياتنا الجميلة 📸</button>
+        </div>
+
+        <div id="step3" class="card">
+            <h2 class="heart-to-heart">Our Memories ✨</h2>
+            <div class="photo-grid">
+                <div class="photo-frame"><img src="https://files.catbox.moe/dhlob8.jpg"></div>
+                <div class="photo-frame"><img src="https://files.catbox.moe/dyrvre.jpg"></div>
+                <div class="photo-frame"><img src="https://files.catbox.moe/vqbrvp.jpg"></div>
+                <div class="photo-frame"><img src="https://files.catbox.moe/7hhndk.jpg"></div>
+            </div>
+            <button class="unlock-btn" onclick="location.reload()" style="margin-top: 25px; min-height: 50px; font-size: 1rem;">إعادة من البداية ❤️</button>
+        </div>
+    </div>
+
+    <script>
+        const lightsContainer = document.getElementById('top-lights');
+        const lightColors = ['#ff0000', '#ffffff'];
+        for(let i=0; i<20; i++) {
+            const light = document.createElement('div');
+            light.className = 'light';
+            light.style.backgroundColor = lightColors[i % 2];
+            light.style.animationDelay = (i * 0.1) + 's';
+            lightsContainer.appendChild(light);
+        }
+
+        function checkPassword() {
+            const pass = document.getElementById('passCode').value;
+            if(pass === "5/4") {
+                document.getElementById('step1').classList.add('exit-card');
+                document.getElementById('xmasSound').play();
+                setTimeout(() => {
+                    document.getElementById('step1').classList.remove('active-card');
+                    document.getElementById('step2').classList.add('active-card');
+                    document.getElementById('myVideo').play();
+                    startCelebration();
+                }, 1000);
+            } else {
+                const btn = document.getElementById('loginBtn');
+                btn.style.animation = 'shake 0.4s';
+                setTimeout(() => btn.style.animation = '', 400);
+            }
+        }
+
+        function nextPage() {
+            document.getElementById('step2').classList.add('exit-card');
+            setTimeout(() => {
+                document.getElementById('step2').classList.remove('active-card');
+                document.getElementById('step3').classList.add('active-card');
+            }, 1000);
+        }
+
+        function handleEnter(e) { if(e.key === "Enter") checkPassword(); }
+
+        const canvas = document.getElementById('heart-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, hearts = [];
+
+        function initHearts() {
+            width = window.innerWidth; height = window.innerHeight;
+            canvas.width = width; canvas.height = height;
+            hearts = [];
+            for(let i=0; i<60; i++) {
+                hearts.push({
+                    x: Math.random() * width, y: Math.random() * height,
+                    size: Math.random() * 12 + 8, speed: Math.random() * 1 + 0.5,
+                    opacity: Math.random() * 0.4 + 0.2
+                });
+            }
+        }
+
+        function drawHearts() {
+            ctx.clearRect(0, 0, width, height);
+            hearts.forEach(h => {
+                ctx.fillStyle = `rgba(255, 0, 0, ${h.opacity})`;
+                ctx.font = `${h.size}px Arial`;
+                ctx.fillText('♥', h.x, h.y);
+                h.y += h.speed;
+                if(h.y > height) h.y = -20;
+            });
+            requestAnimationFrame(drawHearts);
+        }
+
+        function startCelebration() {
+            const emojis = ['❤️','✨','🌹'];
+            for(let i=0; i<40; i++) {
+                setTimeout(() => {
+                    const h = document.createElement('div');
+                    h.innerHTML = emojis[Math.floor(Math.random()*emojis.length)];
+                    h.style.left = Math.random() * 100 + '%';
+                    h.style.position = 'fixed';
+                    h.style.top = '-50px';
+                    h.style.zIndex = '9999';
+                    h.style.fontSize = '25px';
+                    h.style.animation = `fall 3s linear forwards`;
+                    document.body.appendChild(h);
+                }, i * 150);
+            }
+        }
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
+            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        `;
+        document.head.appendChild(style);
+
+        window.addEventListener('resize', initHearts);
+        initHearts();
+        drawHearts();
+    </script>
+</body>
+</html>
